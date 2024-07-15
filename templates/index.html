@@ -4,75 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku Solver</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Sudoku Solver</h1>
-        <table id="sudoku-board">
-            <!-- Sudoku board will be generated here by JavaScript -->
-        </table>
-        <div class="controls">
-            <label for="difficulty">Difficulty (1-10):</label>
-            <input type="number" id="difficulty" name="difficulty" min="1" max="10" value="5">
-            <button onclick="generatePuzzle()">Generate Puzzle</button>
-            <button onclick="solvePuzzle()">Solve Puzzle</button>
+    <div class="container mt-5">
+        <h1 class="text-center">Sudoku Solver</h1>
+        <div class="d-flex justify-content-center mt-3">
+            <select id="difficulty" class="form-control w-25">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+        <div class="sudoku-board mt-3" id="sudoku-board">
+            <!-- Cells will be generated here -->
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+            <button class="btn btn-primary mr-2" onclick="generateBoard()">Generate</button>
+            <button class="btn btn-success" onclick="solveBoard()">Solve</button>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script>
-        let board = [];
-
-        function generatePuzzle() {
-            const difficulty = document.getElementById('difficulty').value;
-            fetch('/generate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `difficulty=${difficulty}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                board = data;
-                renderBoard(board);
-            });
-        }
-
-        function solvePuzzle() {
-            fetch('/solve', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ board })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    board = data;
-                    renderBoard(board);
-                }
-            });
-        }
-
-        function renderBoard(board) {
-            const table = document.getElementById('sudoku-board');
-            table.innerHTML = '';
+        function createBoard(board) {
+            const sudokuBoard = document.getElementById('sudoku-board');
+            sudokuBoard.innerHTML = '';
             for (let i = 0; i < 9; i++) {
-                const row = document.createElement('tr');
                 for (let j = 0; j < 9; j++) {
-                    const cell = document.createElement('td');
+                    const cell = document.createElement('div');
+                    cell.className = 'sudoku-cell';
                     const input = document.createElement('input');
                     input.type = 'text';
+                    input.maxLength = 1;
                     input.value = board[i][j] !== 0 ? board[i][j] : '';
                     cell.appendChild(input);
-                    row.appendChild(cell);
+                    sudokuBoard.appendChild(cell);
                 }
-                table.appendChild(row);
             }
         }
+
+        function getBoard() {
+            const inputs = document.querySelectorAll('.sudoku-cell input');
+            const board = [];
+            for (let i = 0; i < 9; i++) {
+                const row = [];
+                for (let j = 0; j < 9; j++) {
+                    const value = inputs[i * 9 + j].value;
+                    row.push(value ? parseInt(value) : 0);
+                }
+                board.push(row);
+            }
+            return board;
+        }
+
+        function generateBoard() {
+            const difficulty = document.getElementById('difficulty').value;
+            $.post('/generate', JSON.stringify({ difficulty: difficulty }), function (data) {
+                createBoard(data);
+            }, 'json');
+        }
+
+        function solveBoard() {
+            const board = getBoard();
+            $.post('/solve', JSON.stringify({ board: board }), function (data) {
+                createBoard(data);
+            }, 'json');
+        }
+
+        window.onload = generateBoard;
     </script>
 </body>
 </html>
