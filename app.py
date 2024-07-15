@@ -50,7 +50,7 @@ def find_empty(bo):
 def generate_puzzle(difficulty):
     board = [[0 for _ in range(9)] for _ in range(9)]
     fill_board(board)
-    attempts = difficulty
+    attempts = {'easy': 20, 'medium': 40, 'hard': 60}[difficulty]
     while attempts > 0:
         row = random.randint(0, 8)
         col = random.randint(0, 8)
@@ -115,7 +115,7 @@ def index():
 
 @app.route('/generate', methods=['POST'])
 def generate():
-    difficulty = int(request.form['difficulty'])
+    difficulty = request.json.get('difficulty', 'easy')
     board = generate_puzzle(difficulty)
     return jsonify(board)
 
