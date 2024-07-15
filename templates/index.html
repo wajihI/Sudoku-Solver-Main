@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Solver</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sudoku Solver</h1>
+        <table id="sudoku-board">
+            <!-- Sudoku board will be generated here by JavaScript -->
+        </table>
+        <div class="controls">
+            <label for="difficulty">Difficulty (1-10):</label>
+            <input type="number" id="difficulty" name="difficulty" min="1" max="10" value="5">
+            <button onclick="generatePuzzle()">Generate Puzzle</button>
+            <button onclick="solvePuzzle()">Solve Puzzle</button>
+        </div>
+    </div>
+    <script>
+        let board = [];
+
+        function generatePuzzle() {
+            const difficulty = document.getElementById('difficulty').value;
+            fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `difficulty=${difficulty}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                board = data;
+                renderBoard(board);
+            });
+        }
+
+        function solvePuzzle() {
+            fetch('/solve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ board })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    board = data;
+                    renderBoard(board);
+                }
+            });
+        }
+
+        function renderBoard(board) {
+            const table = document.getElementById('sudoku-board');
+            table.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < 9; j++) {
+                    const cell = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = board[i][j] !== 0 ? board[i][j] : '';
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>
