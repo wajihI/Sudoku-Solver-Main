@@ -1,8 +1,8 @@
 # Sudoku-Solver-Main
 Sudoku game with complete functionalities
 
-Due to issues with Heroku (payment required) and other factors, run the Sudoku-Solver-Temp file for a illustration of how the sudoku program would work.
-
+Running the program: 
+Due to issues with Heroku (payment problem) and other factors, run the Sudoku-Solver-Temp file for a illustration of how the sudoku program would work.
 
 Backtracking Algorithm (How it works)
 
