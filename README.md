@@ -4,6 +4,9 @@ Sudoku game with complete functionalities
 ## Running the program: 
 Due to issues with Heroku (payment problem) and other factors, run the Sudoku-Solver-Temp file for a illustration of how the sudoku program would work.
 
+### Requirements:
+To run the app.py file, flask and python need to be installed.
+
 ### Backtracking Algorithm (How it works)
 
 1. Pick an empty square
