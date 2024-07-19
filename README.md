@@ -1,10 +1,10 @@
 # Sudoku-Solver-Main
 Sudoku game with complete functionalities
 
-Running the program: 
+## Running the program: 
 Due to issues with Heroku (payment problem) and other factors, run the Sudoku-Solver-Temp file for a illustration of how the sudoku program would work.
 
-Backtracking Algorithm (How it works)
+### Backtracking Algorithm (How it works)
 
 1. Pick an empty square
 2. Try all possible numbers
